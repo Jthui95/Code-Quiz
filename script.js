@@ -11,6 +11,21 @@ let mainEl = document.querySelector('#main');
 let timerEl = document.querySelector("#countdown");
 let bodyEl = document.createElement("div");
 
+//question 1 answers
+let answerOne = ["Ash", "Brock", "Jake"];
+
+//in it
+// init();
+
+// fucntion init(){
+//     var storedAnswers = JSON.parse(localStorage.getItem('answerOne)'));
+
+//     if(storedAnswerOne !== null) {
+//         answerOne = storedanswerOne;
+//     }
+//     render
+// }
+
 
 //starts the quiz
 startBtn.addEventListener('click', quiz);
@@ -19,7 +34,7 @@ startBtn.addEventListener('click', quiz);
 function quiz() {
     var timeInterval = setInterval(function(){
         secondsLeft--;
-timeLeft.textContent = `${secondsLeft} seconds till game ends.`
+timeLeft.textContent = `Time: ${secondsLeft}`
     if(secondsLeft === 0){
     clearInterval(timeInterval)
     alert("Game Over");
@@ -32,57 +47,37 @@ qOne();
     h.textContent = "What is the main characters name in Pokemon?";
     questions.appendChild(h);
 
-    let answer = ["Ash", "Brock", "Jake"];
+
    
     //creates the answer
-    for(let i = 0; i < answer.length; i++ ){
-        let answers = answer[i];
+    for(let i = 0; i < answerOne.length; i++ ){
+        let answersOne = answerOne[i];
         let li = document.createElement('li');
         li.setAttribute('data-index',i);
 
         let button = document.createElement('button');
-        button.textContent = answers;
+        button.textContent = answersOne;
 
         li.appendChild(button);
         questions.append(li);
     }
-    questions.addEventListener("click", function(){
-        if(answer === "Ash"){
-            userScore++;
-            alert("That's Correct!");
-            setScoreText();
-        }else(answer === "Brock" || answer === "Jake")
+    questions.addEventListener("click", function(event){
+        var element = event.target;
+        if (element.matches("button") === true) {
+                userScore++;
+                alert("That's Correct!");
+                console.log("button");
+        } else if ("Brock" === false){
             secondsLeft--;
-            alert("That's Incorrect!")
-    })
+            alert("That's Incorrect!");
+            console.log("That's Incorrect!");
+        } else ("Jack" === false)
+                alert("That's Incorrect! The correct answer is Ash");
+                console.log(answer === "Jake");
+                secondsLeft--;
+        
+    });
 
-            
-    
-// }
-// }
-// }
-
-// if (element.matches('button')=== true){
-//     let element = event.target
-
-
-// }
-//localStorage.setItem("score", score);
-//sessionStorage.setItem("name", name);
-
-// may not need
-// function quiz(){
-//     mainEl.append(bodyEl);
-//     let quizInterval = setInterval(questionOne, milliseconds);
-
-//     function questionOne(){
-//         if(array[currentQuestion] === undefined){
-//             // stop timer
-//             clearInterval(quizInterval);
-//         }else {
-//             bodyEl.textContent = array[currentQuestion];
-//             currentQuestion++;
-//         }
     }
  }
 
