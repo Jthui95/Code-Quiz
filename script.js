@@ -1,98 +1,147 @@
-//start button
-let startBtn = document.querySelector('#start')
-//score tracker
-let userScore = 0;
-//time related variables
-let timeLeft = document.querySelector('#left');
-let secondsLeft = 75;
-// relates to the formating of the quiz
-let questions = document.querySelector("#questions");
-let mainEl = document.querySelector('#main');
-let timerEl = document.querySelector("#countdown");
-let bodyEl = document.createElement("div");
+  
+var questions = [{
+    title: "Which Pokemon is the mascot for the Pokemon Company?",
+    choices: ["Pikachu", "Eevee", "Psyduck", "Pichu"],
+    answer: "Pikachu"
+},
+{
+    title: "What Pokemon does Pikachu evolve into?",
+    choices: ["Pichu", "Raichu", "Jolteon", "Electivire"],
+    answer: "Raichu"
+},
+{
+    title: " Which Pokeball catches any Pokemon on the first try?",
+    choices: ["Pokeball", "Great Ball", "Master Ball", "Ultra Ball"],
+    answer: "Master Ball"
+},
+{
+    title: "How many Gym Badges must a trainer collect before challenging the Elite Four?",
+    choices: ["4", "9", "7", "8"],
+    answer: "8"
+},
+{
+    title: "What is the name of the device that trainers use to keep record of their Pokemon encounters?",
+    choices: ["Digicounter", "Countermon", " Pokedex", "Digivice"],
+    answer: "Pokedex"
+}
+]
 
-//question 1 answers
-let answerOne = ["Ash", "Brock", "Jake"];
+//setting the numerical variables for the functions.. scores and timers.. 
+var score = 0;
+var currentQuestion = -1;
+var timeLeft = 0;
+var timer;
 
-//in it
-// init();
+//starts the countdown timer once user clicks the 'start' button
+function start() {
 
-// fucntion init(){
-//     var storedAnswers = JSON.parse(localStorage.getItem('answerOne)'));
+timeLeft = 75;
+document.getElementById("timer").innerHTML = timeLeft;
 
-//     if(storedAnswerOne !== null) {
-//         answerOne = storedanswerOne;
-//     }
-//     render
-// }
-
-
-//starts the quiz
-startBtn.addEventListener('click', quiz);
-
-// Starts timer and quiz
-function quiz() {
-    var timeInterval = setInterval(function(){
-        secondsLeft--;
-timeLeft.textContent = `Time: ${secondsLeft}`
-    if(secondsLeft === 0){
-    clearInterval(timeInterval)
-    alert("Game Over");
+timer = setInterval(function() {
+    timeLeft--;
+    document.getElementById("timer").innerHTML = timeLeft;
+    //proceed to end the game function when timer is below 0 at any time
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        endGame(); 
     }
-}, 1000 );
-qOne();
-//creates the question and answer
-    function qOne(){
-    let h = document.createElement("h2");
-    h.textContent = "What is the main characters name in Pokemon?";
-    questions.appendChild(h);
+}, 1000);
+
+next();
+}
+
+//stop the timer to end the game 
+function endGame() {
+clearInterval(timer);
+
+var quizContent = `
+<h2>Game over!</h2>
+<h3>You got a ` + score +  ` /100!</h3>
+<h3>That means you got ` + score / 20 +  ` questions correct!</h3>
+<input type="text" id="name" placeholder="First name"> 
+<button onclick="setScore()">Set score!</button>`;
+
+document.getElementById("quizBody").innerHTML = quizContent;
+}
+
+//store the scores on local storage
+function setScore() {
+localStorage.setItem("highscore", score);
+localStorage.setItem("highscoreName",  document.getElementById('name').value);
+getScore();
+}
 
 
-   
-    //creates the answer
-    for(let i = 0; i < answerOne.length; i++ ){
-        let answersOne = answerOne[i];
-        let li = document.createElement('li');
-        li.setAttribute('data-index',i);
+function getScore() {
+var quizContent = `
+<h2>` + localStorage.getItem("highscoreName") + `'s highscore is:</h2>
+<h1>` + localStorage.getItem("highscore") + `</h1><br> 
 
-        let button = document.createElement('button');
-        button.textContent = answersOne;
+<button onclick="clearScore()">Clear score!</button><button onclick="resetGame()">Play Again!</button>
 
-        li.appendChild(button);
-        questions.append(li);
+`;
+
+document.getElementById("quizBody").innerHTML = quizContent;
+}
+
+//clears the score name and value in the local storage if the user selects 'clear score'
+function clearScore() {
+localStorage.setItem("highscore", "");
+localStorage.setItem("highscoreName",  "");
+
+resetGame();
+}
+
+//reset the game 
+function resetGame() {
+clearInterval(timer);
+score = 0;
+currentQuestion = -1;
+timeLeft = 0;
+timer = null;
+
+document.getElementById("timeLeft").innerHTML = timeLeft;
+
+
+document.getElementById("quizBody").innerHTML = quizContent;
+}
+
+//deduct 15seconds from the timer if user chooses an incorrect answer
+function incorrect() {
+timeLeft -= 15; 
+next();
+}
+
+//increases the score by 20points if the user chooses the correct answer
+function correct() {
+score += 20;
+next();
+}
+
+//loops through the questions 
+function next() {
+currentQuestion++;
+
+if (currentQuestion > questions.length - 1) {
+    endGame();
+    return;
+}
+
+var quizContent = "<h2>" + questions[currentQuestion].title + "</h2>"
+
+for (var buttonLoop = 0; buttonLoop < questions[currentQuestion].choices.length; buttonLoop++) {
+    var buttonCode = "<button onclick=\"[ANS]\">[CHOICE]</button>"; 
+    buttonCode = buttonCode.replace("[CHOICE]", questions[currentQuestion].choices[buttonLoop]);
+    if (questions[currentQuestion].choices[buttonLoop] == questions[currentQuestion].answer) {
+        buttonCode = buttonCode.replace("[ANS]", "correct()");
+    } else {
+        buttonCode = buttonCode.replace("[ANS]", "incorrect()");
     }
-    questions.addEventListener("click", function(event){
-        var element = event.target;
-        if (element.matches("button") === true) {
-                userScore++;
-                alert("That's Correct!");
-                console.log("button");
-        } else if ("Brock" === false){
-            secondsLeft--;
-            alert("That's Incorrect!");
-            console.log("That's Incorrect!");
-        } else ("Jack" === false)
-                alert("That's Incorrect! The correct answer is Ash");
-                console.log(answer === "Jake");
-                secondsLeft--;
-        
-    });
+    quizContent += buttonCode
+}
 
-    }
- }
 
-// function quizSubmit(event){
-// event.preventDefault();
-// console.log('Event', event);
-
-// let response = `Correct! ${asd}`;
-// }
-//.addEventListener('click', quizSubmit);
-// each functio needs to ask their own question and have their own answer
-// each function needs to have a ul and li to make options 
-//input = something you collect info on
-
-// make timer for the code on upper left
-// add the ability to keep track of score for correct answer refer back to rock paper scizzors activity?
-// keep track of score and stuff with computer storage high scores 
+document.getElementById("quizBody").innerHTML = quizContent;
+}
 
